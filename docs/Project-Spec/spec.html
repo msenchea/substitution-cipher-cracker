@@ -93,6 +93,12 @@
 
 <p>After submission, I will run your code on files which you have not been given. The marks will be awarded for how well your programs crack the messages I use. I will use either a message encrypted using a Caesar Cipher, or a substitution cipher to test your code.  You must choose which encryption technique you wish me to use.  Note that if you choose a Caesar cipher, you will only receive a maximum grade of 50%, as this technique only involves shifting letters up or down the alphabet, whereas the substitution cipher uses a far more complex key. I will look at the key you produce and compare it against the actual key.</p>
 
+<h2>Some Pointers</h2>
+
+<p>You will need to do some frequency analysis on the text.  Remember that in a Caesar cipher each letter is simply shifted up (or down) the alphabet by a fixed amount.  So if the shift is +3, then a becomes d, b becomes e etc.  In a substitution cipher, this won't be the case.  Here, a random letter is assigned as the cipher-equivalent of a character in the plain-text.</p>
+
+<p>You can, however, use probabilities to help you.  If, for example, the letter 'w' appears most often in your cipher-text, then you can be fairly certain that it equates to 'e'.  Also, look for commonly occurring groups of two letters.  There are only a few of these.  You can use this sort of information to help you.  In the links at the bottom of this document, and also in the &quot;resources&quot; folder in the gitlab repo, there are resources which will help you with this project.</p>
+
 <h2>Checking your Solution</h2>
 
 <p>You can verify your solution by inspection. There is no need to automatically look up lots of word dictionaries to see if you have cracked the code successfully. The easiest way to do this is to look at the output and the key. Have you matched all letters? Does each letter correspond to one letter in the cipher alphabet? do the words make sense? </p>
