@@ -5,7 +5,10 @@ import multiprocessing
 import threading
 import string
 
+
 def main():
+    english_letter_frequency = "etaoinsrhldcumfpgwybvkxjqz"
+    cypher_text_frequency = ""
     freq_dict = {}
     with open(file,"r") as f:
         for line in f:
@@ -16,8 +19,12 @@ def main():
                         freq_dict[letter] = 0
                     freq_dict[letter] += 1
 
-    for k, v in freq_dict.items():
-        print(f"{k}:{v}")
+    for k in sorted(freq_dict, key=freq_dict.get, reverse=True):
+        cypher_text_frequency += k
+    for i in range(26-len(cypher_text_frequency)):
+        cypher_text_frequency += string.punctuation[i]  #temporarily placing random punctuation until I figure it out
+    print(english_letter_frequency)
+    print(cypher_text_frequency)
 
 
 if __name__ == "__main__":
