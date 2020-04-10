@@ -1,3 +1,5 @@
+#This was a letter by letter oriented approach. It was a failure.
+
 import sys
 import os
 import time
@@ -25,6 +27,19 @@ def main():
         cypher_text_frequency += string.punctuation[i]  #temporarily placing random punctuation until I figure it out
     print(english_letter_frequency)
     print(cypher_text_frequency)
+    mapping = {}
+    for i in range(len(english_letter_frequency)):
+        mapping[cypher_text_frequency[i]] = english_letter_frequency[i]
+
+    cracked = ""
+    with open(file, "r") as f:
+        for line in f:
+            for c in line:
+                if c.lower() in mapping:
+                    cracked += mapping[c.lower()]
+                else:
+                    cracked += c
+    print(cracked)
 
 
 if __name__ == "__main__":
