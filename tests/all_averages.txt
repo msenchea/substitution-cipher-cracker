@@ -1,0 +1,11 @@
+single-russell-cipher-results average = 2.62 seconds
+multi-russell-cipher-results average = 1.16 seconds
+
+single-alice-in-wonderland-cipher-results average = 54.89 seconds
+multi-alice-in-wonderland-cipher-results average = 22.12 seconds
+
+single-os-sub-cipher-results average = 57.05 seconds
+multi-os-sub-cipher-results average = 24.20 seconds
+
+single-two-cities-cipher-results average = 6.40 seconds
+multi-two-cities-cipher-results average = 2.79 seconds
