@@ -9,7 +9,10 @@ from math import log10
 from copy import deepcopy
 import queue
 
+# usage: python3 decipher.py FILENAME
+
 def load_scores_file():
+    ''' loads the quadgram_scores dictionary using the quadgram_scores.txt file'''
     quadgram_scores = {}
     with open("quadgram_scores.txt", "r") as f:
         for line in f:
@@ -37,6 +40,7 @@ def input_formatter(inputfile):
     return text
 
 def create_freq_table(text):
+    ''' creates freq dictionary with all letter frequencies '''
     letter_freqs = {}
     for letter in text:
         if letter not in letter_freqs:
@@ -47,7 +51,7 @@ def create_freq_table(text):
 def create_freq_key(freq_table):
     ''' creates key based on most common letter frequencies in the english language '''
     origin_key = "".join(sorted(freq_table, key=freq_table.get, reverse=True))
-    english_freq = "ETAONISRHLDCUPFMWYBGVKQXJZ"
+    english_freq = "ETAONISRHLDCUPFMWYBGVKQXJZ" # Most frequent english letters in order
 
     if len(origin_key) < 26: # if the ciphertext doesn't have all the letters in it, complete the key with the remaining letters
         origin_key += "".join(set(english_freq).difference(set(origin_key)))
@@ -55,8 +59,8 @@ def create_freq_key(freq_table):
     freq_key = ""
     temp = {}
     for k, v in zip(english_freq, origin_key):
-        temp[k] = v
-    for k in sorted(temp):
+        temp[k] = v # matching english freq to cypher freq of the same frequency
+    for k in sorted(temp): # generates a key string which is in alphabetical order
         freq_key += temp[k]
     return freq_key
 
@@ -97,12 +101,13 @@ def codebreaker(quadgram_scores, text, qq, key="ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
 
 
 def generate_output_files(inputfile, key):
+    ''' creates the decrypted and key output files '''
     mapping = {}
-    for k, v in zip(key, string.ascii_uppercase):
+    for k, v in zip(key, string.ascii_uppercase): # first create a dictionary which maps key letters to the alphabet...
         mapping[k] = v
 
     plaintext = ""
-    with open(inputfile, "r") as f:
+    with open(inputfile, "r") as f: # ...then assemble the text using the key 
         for line in f:
             for c in line:
                 if c.upper() in mapping:
@@ -114,7 +119,7 @@ def generate_output_files(inputfile, key):
                 else:
                     plaintext += c
 
-    out = inputfile.strip().rsplit(".",1)[0]
+    out = inputfile.strip().rsplit(".",1)[0] # remove the .txt of the input file
 
     with open(f"{out}-decrypted.txt", "w") as outputfile:
         for line in plaintext:
@@ -124,20 +129,20 @@ def generate_output_files(inputfile, key):
             keyfile.write(f"{v} = {k}\n")
 
 def main(inputfile):
-    start_time = time.time()
+    start_time = time.time() # start the timer
     quadgram_scores = load_scores_file()
     text = input_formatter(inputfile)
     freq_table = create_freq_table(text)
     freq_key = create_freq_key(freq_table)
-    alphabet = list(string.ascii_uppercase)
+    alphabet = list(string.ascii_uppercase) # random.shuffle only works with lists.
 
     qq = multiprocessing.Queue()
 
     processes = []
-    for _ in range(3):
+    for _ in range(3): # making 9 total processes, using different keys.
         p = multiprocessing.Process(target=codebreaker, args=(quadgram_scores, text, qq, freq_key,))
         processes.append(p)
-        p.start()
+        p.start() # send process away to find a peak
 
         p = multiprocessing.Process(target=codebreaker, args=(quadgram_scores, text, qq, string.ascii_uppercase,))
         processes.append(p)
@@ -149,18 +154,18 @@ def main(inputfile):
         p.start()
 
     for p in processes:
-        p.join()
+        p.join()    # wait for all processes to be finished
 
-    final_score = qq.get()
+    final_score = qq.get() # setting the first values in the queue as the best for later comparisions
     final_key = qq.get()
     while not qq.empty():
         score = qq.get()
         key = qq.get()
-        if score > final_score:
+        if score > final_score: # if the score is better than the current best score, update it.
             final_score = score
             final_key = key
 
-    generate_output_files(inputfile, final_key)
+    generate_output_files(inputfile, final_key) # go create the output files
 
 
     print(f"time elapsed = {time.time() - start_time:.2f} seconds") # calculate and print time elapsed
