@@ -137,8 +137,8 @@ def main(inputfile):
     freq_key = create_freq_key(freq_table)
     alphabet = list(string.ascii_uppercase) # random.shuffle only works with lists.
 
+    print("decrypting...")
     qq = multiprocessing.Queue()
-
     processes = []
     for _ in range(3): # making 9 total processes, using different keys, this is done to try and avoid local maxima and to get a more accurate result.
         p = multiprocessing.Process(target=codebreaker, args=(quadgram_scores, text, qq, freq_key,))
@@ -166,10 +166,12 @@ def main(inputfile):
             final_score = score
             final_key = key
 
+    print("decryption complete")
     generate_output_files(inputfile, final_key) # go create the output files
 
 
     print(f"time elapsed = {time.time() - start_time:.2f} seconds") # calculate and print time elapsed
+    print("key and text output files generated in the same directory as the input")
 
 if __name__ == "__main__":
     if len(sys.argv) == 2:
