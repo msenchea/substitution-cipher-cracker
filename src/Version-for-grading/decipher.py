@@ -10,6 +10,7 @@ from copy import deepcopy
 import queue
 
 # usage: python3 decipher.py FILENAME
+# please note that the quadgram_scores file was generated using resources from the website Practical Cryptography.
 
 def load_scores_file():
     ''' loads the quadgram_scores dictionary using the quadgram_scores.txt file'''
@@ -75,7 +76,7 @@ def text_decrypter(text, key):
     return decyphered_text
 
 def codebreaker(quadgram_scores, text, qq, key="ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
-    ''' finds key using quadgram frequencies and randomly swapping key values '''
+    ''' finds key using quadgram frequencies and randomly swapping key values, stops when best_score doesn't change for 1000 iterations. '''
     best_key = key
     best_score = get_score(text_decrypter(text, best_key), quadgram_scores) # setting a baseline score using given key
 
@@ -96,7 +97,7 @@ def codebreaker(quadgram_scores, text, qq, key="ABCDEFGHIJKLMNOPQRSTUVWXYZ"):
 
         count += 1
 
-    qq.put(best_score)
+    qq.put(best_score)  # put this process' best score and key into the multiprocessing queue.
     qq.put(best_key)
 
 
@@ -107,7 +108,7 @@ def generate_output_files(inputfile, key):
         mapping[k] = v
 
     plaintext = ""
-    with open(inputfile, "r") as f: # ...then assemble the text using the key 
+    with open(inputfile, "r") as f: # ...then assemble the text using the key
         for line in f:
             for c in line:
                 if c.upper() in mapping:
@@ -139,7 +140,7 @@ def main(inputfile):
     qq = multiprocessing.Queue()
 
     processes = []
-    for _ in range(3): # making 9 total processes, using different keys.
+    for _ in range(3): # making 9 total processes, using different keys, this is done to try and avoid local maxima and to get a more accurate result.
         p = multiprocessing.Process(target=codebreaker, args=(quadgram_scores, text, qq, freq_key,))
         processes.append(p)
         p.start() # send process away to find a peak
